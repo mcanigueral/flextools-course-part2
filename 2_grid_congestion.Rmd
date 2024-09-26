@@ -1,0 +1,148 @@
+---
+title: "Smart charging for grid congestion"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(lubridate)
+library(dygraphs)
+library(dutils)
+library(ggplot2)
+library(purrr)
+library(flextools)
+library(evsim)
+```
+
+
+This notebook aims to simulate smart charging in a scenario where the EV load causes grid congestion. Before running into the exercises make sure that you have already simulated the EV charging sessions (`ev_sessions`) in the `1_data.Rmd` notebook.
+
+
+# Grid capacity
+
+Imagine that we have to charge these EVs in an installation that has a specific **grid connection that can't be increased**. Set the maximum grid capacity to the 50% of your peak:
+
+```{r}
+# grid_capacity <- 
+```
+
+
+To configure this grid capacity in the `smart_charging()` function, a column with the same name than the EV user profile in the `sessions` parameter must be found in the `opt_data` parameter. 
+
+First, let's assume that all sessions will be coordinated as the same user profile. For that, let's `mutate` the `ev_sessions` object to assign the value `"EV"` to the column `Profile`:
+
+```{r}
+sessions <- ev_sessions %>%
+  mutate(Profile = "EV")
+```
+
+Second, add the corresponding column to the `opt_data` object as a setpoint:
+
+```{r}
+opt_data <- tibble(
+  datetime = ev_demand$datetime, # Same date-time sequence than the demand
+  EV = grid_capacity
+)
+```
+
+Now, you can test the `smart_charging()` function with different smart charging **methods**. 
+
+* Postpone:
+
+```{r}
+
+```
+
+* Interrupt:
+
+```{r}
+
+```
+
+* Curtail:
+
+```{r}
+
+```
+
+
+For each one:
+
+1. Apply the `smart_charging()` function
+2. Plot the time-series setpoint together with the EV demand from the coordinated sessions (use function `evsim::get_demand()`), to see if the maximum grid capacity can be respected
+
+
+Which method seems to be more suitable for this EV demand?
+
+## User profiles
+
+From the different User profiles that we have, choose the one with more flexibility potential for peak shaving. Apply smart charging using only this user profile:
+
+```{r}
+
+```
+
+Moreover, you can configure that only a part of the EV users of a specific profile respond to the smart charging signal, using the `responsive` parameter in `smart_charging()` function. Configure that only the 50% of the users of the selected EV user profiles accept to participate:
+
+```{r}
+
+```
+
+Answer the following questions:
+
+* Are the results still acceptable?
+* Which percentage of responsiveness is the limit to avoid surpassing the grid capacity?
+
+
+
+# Demand-response signals
+
+As a Charging Point Operator (CPO) we could participate in a flexibiliy market, where the DSO can establish dynamic capacity signals according to the rest of loads in the power system.
+
+From the object `energy_df` previously created, plot the EV demand on top of the building demand to see the total consumption of both loads:
+
+```{r}
+
+```
+
+Simulate a daily flexibility market offer with the following specifications:
+
+* Baseline: historic maximum peak demand
+* Power request: turn-down demand 15 kW
+* Time request: from 17:00 to 22:00
+
+```{r}
+# offer_df <- 
+```
+
+```{r}
+
+```
+
+Now simulate the same considering that the power request for turn-down demand is 30 kW:
+
+```{r}
+
+```
+
+Is it possible to achieve? 
+
+Now configure the parameter `energy_min = 0` to see the impact to the users in order to deliver the requested flexibility offer:
+
+```{r}
+
+```
+
+Calculate the average percentage of energy charged for every user profile and day:
+
+```{r}
+
+```
+
+
+
+
+
+
+

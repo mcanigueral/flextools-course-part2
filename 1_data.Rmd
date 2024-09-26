@@ -1,0 +1,135 @@
+---
+title: "Data preparation"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(lubridate)
+library(dygraphs)
+library(dutils)
+library(ggplot2)
+library(purrr)
+library(flextools)
+library(evsim)
+```
+
+
+This notebook aims to prepare the power demand data that will be used in the next notebooks where smart charging will be applied using `flextools` package.
+
+
+# EV sessions simulation
+
+To simulate smart charging, the first thing we need is a data set of charging sessions. If you already simulated a custom data set of EV sessions in previous lessons, you can re-use that data set. However, even though the parameters were already defined in other lessons, we advise to create again the custom EV model and simulate the charging sessions data set in this project. In this way, if we want to modify the EV sessions at a certain stage we can always come back to this notebook.
+
+Create a custom EV model using `evsim` function `evsim::get_custom_ev_model`. Remember that you have to configure the parameters of your EV user profiles in a list of tibbles (argument `parameters_lst`). You can create this list manually in this notebook or by reading the multiple workseets of an Excel file (for that you can use functions `purrr::map()`, `readxl::excel_sheets()` and `readxl::read_excel()`):
+
+```{r}
+# ev_model <-
+```
+
+
+Create a custom EV charging sessions data set using `evsim` function `evsim::simulate_sessions()`. Choose the scenario you want to simulate, but a high-demand scenario is advised to better assess the impact of EV charging and the potential benefits of smart charging. Describe the corresponding chosen scenario. Simulate one month of charging sessions.
+
+```{r}
+# set.seed(1234)
+# ev_sessions <- 
+```
+
+
+Get the time-series EV demand **of every charging session** using `evsim` function `evsim::get_demand()`.
+
+```{r}
+# ev_demand <-
+```
+
+
+Plot the time-series EV demand of the simulated charging sessions using `evsim` function `evsim::plot_ts()`.
+
+```{r}
+
+```
+
+
+Plot now the aggregated EV demand. There are two different ways to do it:
+
+* Directly in the plot, stacking the curves:
+```{r}
+
+```
+
+* Sum all EV users first, and then plot:
+```{r}
+
+```
+
+
+
+
+Answer the following questions:
+
+* Is there any **peak hour** when most of EV users are consuming?
+* Which is the maximum demand?
+* Which is the average peak?
+* Which is the user profile that mostly contributes to the peak?
+
+
+
+# Building data
+
+We will apply smart charging over charging sessions that occur in a certain environment, for example a building. In the last course about assessment of charging infrastructure we analysed the power demand profile of an existing building. You can re-use that.
+
+Read the demand profiles from a custom building:
+
+```{r}
+# building_df <- 
+```
+
+Plot the time-series data frame:
+
+```{r}
+
+```
+
+
+
+However, this building profile was recorded during a time period that does not coincide with the date-time sequence of the EV charging sessions. We can adapt the building's date-time sequence to the EV years, using function `dutils::change_timeseries_year` (see function's help documentation for more details):
+
+```{r}
+# building_df <- change_timeseries_year(
+#   df = building_df,
+#   year_out = 
+# )
+```
+
+
+Now we will add other contextual variables to this building such as PV production, energy prices, etc. For that, you can use the example data set, `energy_profiles` provided by `flextools`. 
+
+```{r}
+# print(energy_profiles)
+```
+
+
+From all variables in the `energy_profiles` object, remove the `building` column, since we already have our own building power demand. Change the time-zone and resolution of the date-time variable if required. Also, change the date-time year to our desired year (same than EV sessions) with function `dutils::change_timeseries_year`. 
+
+```{r}
+
+```
+
+
+Create a new data frame called `energy_df` with all our variables: EV demand (from `ev_demand`), building demand (from `building_df`) and contextual variables (from `energy_profiles`):
+
+```{r}
+# energy_df <- 
+```
+
+
+Finally, save the environment in a file:
+
+```{r}
+# save.image(file = "data.RData")
+```
+
+
+

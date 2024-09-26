@@ -1,0 +1,155 @@
+---
+title: "Smart charging for energy optimization"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(lubridate)
+library(dygraphs)
+library(dutils)
+library(ggplot2)
+library(purrr)
+library(flextools)
+library(evsim)
+```
+
+
+This notebook aims to simulate smart charging in a scenario where the EV load is optimized with a certain energy objective or goal. Before running into the exercises make sure that you have already simulated the EV charging sessions (`ev_sessions`) and created the energy profiles data frame (`energy_df`) in the `1_data.Rmd` notebook.
+
+
+# Energy optimization
+
+Another possible application of smart charging is to coordinate EV sessions to maximize the use of renewable energy or to minimize the energy cost. Let's see some examples of these optimization applications using the example data set `energy_df`.
+
+From the object `energy_df` previously created, plot the EV demand on top of the building demand  (stacked) to see the total consumption of both loads:
+
+```{r}
+
+```
+
+* Does the EV demand coincide with the peak of the buildings demand?
+* Does the EV demand coincide with the solar production?
+
+
+Following, we will test the `smart_charging()` function with multiple optimization goals.
+
+
+## Net power minimization
+
+Apply smart charging with `opt_objective = "grid"`:
+
+```{r}
+# sc_results <- 
+```
+
+Plot the setpoints from the results:
+
+```{r}
+
+```
+
+Calculate the time-series EV demand from the results:
+
+```{r}
+
+```
+
+Plot the EV demand on top of the buildings (stacked):
+
+```{r}
+
+```
+
+Calculate and plot the net power from the grid:
+
+```{r}
+
+```
+
+
+
+## Energy cost
+
+Apply smart charging with `opt_objective = "cost"`:
+
+```{r}
+# sc_results <- 
+```
+
+Plot the setpoints from the results:
+
+```{r}
+
+```
+
+Calculate the time-series EV demand from the results:
+
+```{r}
+
+```
+
+Plot the EV demand on top of the buildings (stacked):
+
+```{r}
+
+```
+
+Calculate and plot the net power from the grid:
+
+```{r}
+
+```
+
+
+## Combined optimization
+
+Apply smart charging with `opt_objective = 0.5`:
+
+```{r}
+# sc_results <- 
+```
+
+Plot the setpoints from the results:
+
+```{r}
+
+```
+
+Calculate the time-series EV demand from the results:
+
+```{r}
+
+```
+
+Plot the EV demand on top of the buildings (stacked):
+
+```{r}
+
+```
+
+Calculate and plot the net power from the grid:
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
