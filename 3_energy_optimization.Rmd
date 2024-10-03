@@ -23,7 +23,7 @@ This notebook aims to simulate smart charging in a scenario where the EV load is
 
 Another possible application of smart charging is to coordinate EV sessions to maximize the use of renewable energy or to minimize the energy cost. Let's see some examples of these optimization applications using the example data set `energy_df`.
 
-From the object `energy_df` previously created, plot the EV demand on top of the building demand  (stacked) to see the total consumption of both loads:
+From the object `energy_df` previously created, plot the EV demand on top of the building demand (stacked) to see the total consumption of both loads:
 
 ```{r}
 
@@ -33,10 +33,25 @@ From the object `energy_df` previously created, plot the EV demand on top of the
 * Does the EV demand coincide with the solar production?
 
 
-Following, we will test the `smart_charging()` function with multiple optimization goals.
+Following, we will test the `smart_charging()` function with `method="curtail"` and multiple optimization goals.
 
 
 ## Net power minimization
+
+Create a `df_static` tibble with columns `datetime`, `consumption` (buildings + EVs) and `production` (solar) and use the function `plot_net_power()` to visualize the net power profile of our demand:
+
+```{r}
+
+```
+
+* Which is the maximum net power value? You can calculate it with function `get_energy_balance()`
+* Is it from production or consumption?
+
+Now, to use `smart_charging()` for net power optimization we need to create the `opt_data` data frame from the `energy_df` object, with the required columns `static` (building) and `production` (solar):
+
+```{r}
+
+```
 
 Apply smart charging with `opt_objective = "grid"`:
 
@@ -44,25 +59,30 @@ Apply smart charging with `opt_objective = "grid"`:
 # sc_results <- 
 ```
 
-Plot the setpoints from the results:
+Plot the results:
 
 ```{r}
 
 ```
 
-Calculate the time-series EV demand from the results:
+* Is the optimal EV setpoint achieved in all time slots?
+* Is there a rebound effect at the end of the optimization window?
+
+Calculate the **percentage of net power peak reduction** thanks to smart charging. You can use function `get_energy_kpis()` to obtain some energy indicators. Remember that first you will have to create the tibble `df_flexible` with the final EV demand in the `consumption` variable.
 
 ```{r}
 
 ```
 
-Plot the EV demand on top of the buildings (stacked):
+
+If we have a rebound effect at the end of the window is a signal that the setpoint is too restrictive. To avoid that, we can configure a certain allowed threshold using the parameter `power_th` in `smart_charging()`. Is there any value of `power_th` that could provide a higher percentage of net power peak reduction?
 
 ```{r}
 
 ```
 
-Calculate and plot the net power from the grid:
+
+When you have the optimal configuration, plot the net power profile comparing with the original net power profile configuring the `original_df` parameter in the `plot_net_power()` function:
 
 ```{r}
 
@@ -72,81 +92,106 @@ Calculate and plot the net power from the grid:
 
 ## Energy cost
 
+Using the `df_static` tibble with columns `datetime`, `consumption` (buildings + original EVs) and `production` (solar), and the energy cost variables (`price_imported` and `price_exported`) and visualize the energy cost for every time stamp using the function `plot_energy_cost()`:
+
+```{r}
+
+```
+
+* Which is the current total cost? You can calculate it with function `get_energy_total_cost()`
+
+
+Now, to use `smart_charging()` for energy cost optimization we need to create the `opt_data` data frame from the `energy_df` object, with the required columns `static` (building) and `production` (solar), `price_imported` and `price_exported`:
+
+```{r}
+
+```
+
 Apply smart charging with `opt_objective = "cost"`:
 
 ```{r}
 # sc_results <- 
 ```
 
-Plot the setpoints from the results:
+Plot the results:
 
 ```{r}
 
 ```
 
-Calculate the time-series EV demand from the results:
+* Is the optimal EV setpoint achieved in all time slots?
+* Is the setpoint very sensitive to the energy price?
 
-```{r}
-
-```
-
-Plot the EV demand on top of the buildings (stacked):
-
-```{r}
-
-```
-
-Calculate and plot the net power from the grid:
+Calculate the **percentage of energy cost reduction** thanks to smart charging. You can use function `get_energy_total_cost()` to obtain the cost indicator. Remember that first you will have to create the tibble `df_flexible` with the final EV demand in the `consumption` variable.
 
 ```{r}
 
 ```
 
 
-## Combined optimization
+If the setpoint was not realistic due to price fluctuations, try to set a`lambda` value to avoid high changes to the EV demand:
 
-Apply smart charging with `opt_objective = 0.5`:
+```{r}
+
+```
+
+* Which value of `lambda` gives the highest price reduction?
+
+
+Now use **combined optimization**  setting the `opt_objective` between 0 and 1:
+
+```{r}
+
+```
+
+* Which value of `opt_objective` gives the highest price reduction?
+
+
+Between using the `lambda` parameter and the combined optimization, which option do you think is the best to control cost optimization?
+
+
+
+## Energy cost optimization with grid constraints
+
+Imagine that we want to optimize the energy cost in a constrained grid. As a test, can set the **maximum grid capacity** for all consumption (buildings + evs) to the **50% of our current net power consumption**. Calculate the value of kW that would suppose our `grid_capacity`:
+
+```{r}
+# grid_capacity <- 
+```
+
+Now, we can simulate the same energy cost optimization from the previous section with this grid constrain if we include the variable `grid_capacity` in our `opt_data` tibble:
+
+```{r}
+# opt_data <- 
+```
+
+Repeat the energy cost simulation from previous section, with the `lambda` and `opt_objective` configuration that you find appropriate:
 
 ```{r}
 # sc_results <- 
 ```
 
-Plot the setpoints from the results:
+
+Plot the net power profile to verify that our maximum grid capacity is respected:
 
 ```{r}
 
 ```
 
-Calculate the time-series EV demand from the results:
+Calculate the total energy cost reduction thanks to smart charging:
 
 ```{r}
 
 ```
 
-Plot the EV demand on top of the buildings (stacked):
+* Is the energy cost lower than the original scenario?
+
+
+If not, adjust the `grid_capacity` until find the **lowest grid capacity value the allows us to reduce the energy cost**:
 
 ```{r}
 
 ```
-
-Calculate and plot the net power from the grid:
-
-```{r}
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

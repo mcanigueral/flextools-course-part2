@@ -1,7 +1,9 @@
 
-# Introduction
+# Flextools course - custom data sets
 
-This RMarkdown document aims to be a tutorial to use the `flextools` package. First, install the latest development version of `evsim`, `flextools` and  `dutils`:
+This RMarkdown document aims to be a tutorial to use the `flextools` package. In this second part of the course we will use custom data sets to do all the exercises, instead of the example data sets that were provided in the introduction course. 
+
+First, install the latest development version of `evsim`, `flextools` and  `dutils`:
 
 ```
 # install.packages("remotes")

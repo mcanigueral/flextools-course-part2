@@ -19,7 +19,7 @@ library(evsim)
 This notebook aims to simulate smart charging in a scenario where the EV load causes grid congestion. Before running into the exercises make sure that you have already simulated the EV charging sessions (`ev_sessions`) in the `1_data.Rmd` notebook.
 
 
-# Grid capacity
+# Limited grid capacity
 
 Imagine that we have to charge these EVs in an installation that has a specific **grid connection that can't be increased**. Set the maximum grid capacity to the 50% of your peak:
 
@@ -46,34 +46,18 @@ opt_data <- tibble(
 )
 ```
 
-Now, you can test the `smart_charging()` function with different smart charging **methods**. 
-
-* Postpone:
+Now, test the `smart_charging()` function with `method = "curtail"`:
 
 ```{r}
-
+# sc_results <-
 ```
 
-* Interrupt:
-
-```{r}
-
-```
-
-* Curtail:
-
-```{r}
-
-```
+Plot the time-series setpoint together with the EV demand from the coordinated sessions, to see if the maximum grid capacity can be respected. For that, use function `flextools::plot_smart_charging(sc_results)` or the native function `plot(sc_results)`.
 
 
-For each one:
-
-1. Apply the `smart_charging()` function
-2. Plot the time-series setpoint together with the EV demand from the coordinated sessions (use function `evsim::get_demand()`), to see if the maximum grid capacity can be respected
+Now, check the impact to the EV users with function `flextools::summarise_energy_charged`. Which is the minimum percentage of energy charged? 
 
 
-Which method seems to be more suitable for this EV demand?
 
 ## User profiles
 
@@ -83,7 +67,7 @@ From the different User profiles that we have, choose the one with more flexibil
 
 ```
 
-Moreover, you can configure that only a part of the EV users of a specific profile respond to the smart charging signal, using the `responsive` parameter in `smart_charging()` function. Configure that only the 50% of the users of the selected EV user profiles accept to participate:
+Moreover, you can configure that only a part of the EV users of a specific profile respond to the smart charging signal, using the `responsive` parameter in `smart_charging()` function. Configure that **only the 50%** of the users of the selected EV user profiles accept to participate:
 
 ```{r}
 
@@ -95,54 +79,69 @@ Answer the following questions:
 * Which percentage of responsiveness is the limit to avoid surpassing the grid capacity?
 
 
+## Reducing energy charged
 
-# Demand-response signals
+Again, let's assume that **only the 50%** of the users of the selected EV user profiles accept to participate. We have seen that in that case, the flexibility potential is too low to remain below the grid capacity. To solve this problem, another source of flexibility is to allow not to charge completely the EV battery of the flexible EV users. This can be configured with the parameter `energy_min`. 
 
-As a Charging Point Operator (CPO) we could participate in a flexibiliy market, where the DSO can establish dynamic capacity signals according to the rest of loads in the power system.
-
-From the object `energy_df` previously created, plot the EV demand on top of the building demand to see the total consumption of both loads:
-
-```{r}
-
-```
-
-Simulate a daily flexibility market offer with the following specifications:
-
-* Baseline: historic maximum peak demand
-* Power request: turn-down demand 15 kW
-* Time request: from 17:00 to 22:00
-
-```{r}
-# offer_df <- 
-```
+Simulate the smart charging using the parameter `energy_min = 0` in `smart_charging()` function:
 
 ```{r}
 
 ```
 
-Now simulate the same considering that the power request for turn-down demand is 30 kW:
-
-```{r}
-
-```
-
-Is it possible to achieve? 
-
-Now configure the parameter `energy_min = 0` to see the impact to the users in order to deliver the requested flexibility offer:
-
-```{r}
-
-```
-
-Calculate the average percentage of energy charged for every user profile and day:
+Plot the results and check that now we can remain below the grid capacity:
 
 ```{r}
 
 ```
 
 
+Calculate the average percentage of energy charged for every session with function `flextools::summarise_energy_charged()`, to see the impact to the users if we want to deliver the requested flexibility:
+
+```{r}
+
+```
+
+Plot a histogram of the percentage of energy charged to see its distribution. Use `ggplot2` functions:
+
+```{r}
+
+```
 
 
+## Limitations from the users
+
+Another possible scenario is when a specific EV model can't charge below a certain power. The default **curtail** strategy assumes that the power can be limited until 0, but in some cases the EV could stop charging below 2kW, for example. This can be configured with the parameter `charging_power_min`. 
+
+Simulate smart charging configuring the percentage of `charging_power_min` corresponding to 2kW considering your nominal charging power. 
+
+```{r}
+
+```
+
+Check that the charging power of the `Exploited` sessions is always higher or equal to the configured minimum power. For that, you can plot a histogram using `ggplo2` functions:
+
+```{r}
+
+```
+
+Plot the smart charging results to check if we can achieve our objective:
+
+```{r}
+
+```
+
+If we surpass the grid capacity with this minimum power, find the required `energy_min` to meet our grid constraints:
+
+```{r}
+
+```
+
+Plot a histogram of the percentage of energy charged and compare it to the previous case when `charging_power_min = 0`:
+
+```{r}
+
+```
 
 
 
