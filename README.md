@@ -3,13 +3,12 @@
 
 This RMarkdown document aims to be a tutorial to use the `flextools` package. In this second part of the course we will use custom data sets to do all the exercises, instead of the example data sets that were provided in the introduction course. 
 
-First, install the latest development version of `evsim`, `flextools` and  `dutils`:
+First, install the latest development version of `evsim` and `flextools``:
 
 ```
 # install.packages("remotes")
 remotes::install_github("mcanigueral/flextools")
 remotes::install_github("mcanigueral/evsim")
-remotes::install_github("mcanigueral/dutils")
 ```
 
 And import them:
@@ -17,7 +16,6 @@ And import them:
 ```
 library(flextools)
 library(evsim)
-library(dutils)
 ```
 
 The `flextools` packages provides the framework to simulate smart charging of a charging sessions data set, through `smart_charging()` function. The smart charging concept is widely used in different fields and applications. In `flextools` package, we define *smart charging* as a tool to coordinate individual EV charging sessions in order to obtain the optimal aggregated demand profile according to a certain objective. 

@@ -8,7 +8,6 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(lubridate)
 library(dygraphs)
-library(dutils)
 library(ggplot2)
 library(purrr)
 library(flextools)
@@ -87,6 +86,19 @@ When you have the optimal configuration, plot the net power profile comparing wi
 ```{r}
 
 ```
+
+
+Now, use function `plot_load_duration_curve()` to visualize the changes in the use of the grid, for both the original and smart charging scenarios:
+
+```{r}
+
+```
+
+Answer the following questions for both scenarios:
+* What is the net power level from which we consume more than 2% of the time?
+* Does the power reduction calculated before coincide with the values in this curve?
+* How do you interpret the differences between the original and flexible scenario?
+
 
 
 

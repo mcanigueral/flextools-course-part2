@@ -8,7 +8,6 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(lubridate)
 library(dygraphs)
-library(dutils)
 library(ggplot2)
 library(purrr)
 library(flextools)
@@ -55,7 +54,7 @@ Plot the time-series data frame:
 
 ```
 
-Is is possible that this building profile was recorded during a time period that does not coincide with the date-time sequence of our simulations. We can adapt the building's date-time sequence to the simulation year, using function `dutils::change_timeseries_year` (see function's help documentation for more details):
+Is is possible that this building profile was recorded during a time period that does not coincide with the date-time sequence of our simulations. We can adapt the building's date-time sequence to the simulation year, using function `flextools::change_timeseries_year` (see function's help documentation for more details):
 
 ```{r}
 # building_df <- change_timeseries_year(
